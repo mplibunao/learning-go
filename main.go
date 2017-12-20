@@ -21,8 +21,8 @@ func main() {
 	}
 
 	// checklink waits for a message from channel then passes it to checklink (infinite loop)
-	for {
-		go checkLink(<-c, c)
+	for l := range c {
+		go checkLink(l, c)
 	}
 }
 
