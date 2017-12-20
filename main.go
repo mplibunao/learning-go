@@ -23,10 +23,10 @@ func main() {
 
 	// checklink waits for a message from channel then passes it to checklink (infinite loop)
 	for l := range c {
-		go func() {
+		go func(link string) {
 			time.Sleep(5 * time.Second)
-			go checkLink(l, c)
-		}()
+			go checkLink(link, c)
+		}(l)
 	}
 }
 
