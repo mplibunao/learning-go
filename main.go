@@ -14,5 +14,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println(resp)
+	bs := make([]byte, 99999)
+	// Since body has Read and Close interface, it means it also has access to Read method
+	resp.Body.Read(bs)
+	fmt.Println(string(bs))
 }
