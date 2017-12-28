@@ -41,6 +41,8 @@ func main() {
 		log.Fatal(getErr)
 	}
 
+	fmt.Println("HTTP: %s\n", res.Status)
+
 	body, readErr := ioutil.ReadAll(res.Body)
 	if readErr != nil {
 		log.Fatal(readErr)
