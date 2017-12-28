@@ -3,6 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"time"
 )
 
 /*
@@ -19,21 +23,44 @@ type people struct {
 }
 
 func main() {
-	text := `{
-				"people": [
-					{ "craft": "ISS", "name": "Sergey Rizhikov" },
-					{ "craft": "ISS", "name": "Andrey Borisenk" }
-				],
-				"message": "success",
-				"number": 6
-			}`
-	textBytes := []byte(text)
+	url := "http://api.open-notify.org/astros.json"
+
+	spaceClient := http.Client{
+		Timeout: time.Second * 2, // Max of 2 secs
+	}
+
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	req.Header.Set("User-Agent", "spacecount")
+
+	res, getErr := spaceClient.Do(req)
+	if getErr != nil {
+		log.Fatal(getErr)
+	}
+
+	body, readErr := ioutil.ReadAll(res.Body)
+	if readErr != nil {
+		log.Fatal(readErr)
+	}
 
 	people1 := people{}
-	err := json.Unmarshal(textBytes, &people1)
-	if err != nil {
-		fmt.Println(err)
-		return
+	jsonErr := json.Unmarshal(body, &people1)
+	if jsonErr != nil {
+		log.Fatal(jsonErr)
 	}
+
 	fmt.Println(people1.Number)
+
+	// textBytes := []byte(text)
+
+	// people1 := people{}
+	// err := json.Unmarshal(textBytes, &people1)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return
+	// }
+	// fmt.Println(people1.Number)
 }
