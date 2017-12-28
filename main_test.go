@@ -31,3 +31,13 @@ func TestTableSum(t *testing.T) {
 		}
 	}
 }
+
+/**
+	go test
+	go test -v
+	go test -cover
+
+	To generate HTML coverate report (cannot find some package stuff)
+	go test -cover -coverprofile=c.out
+	go tool cover -html=c.out -o coverage.html
+**/
