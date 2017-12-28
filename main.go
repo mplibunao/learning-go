@@ -3,10 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
-	"net/http"
-	"time"
 )
 
 /*
@@ -22,47 +19,55 @@ type people struct {
 	Number int `json:"number"`
 }
 
-func main() {
+type GetWebRequest interface {
+	FetchBytes(url string) []byte
+}
+
+func GetAstronauts(getWebRequest GetWebRequest) int {
 	url := "http://api.open-notify.org/astros.json"
-
-	spaceClient := http.Client{
-		Timeout: time.Second * 2, // Max of 2 secs
-	}
-
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	req.Header.Set("User-Agent", "spacecount")
-
-	res, getErr := spaceClient.Do(req)
-	if getErr != nil {
-		log.Fatal(getErr)
-	}
-
-	fmt.Println("HTTP: %s\n", res.Status)
-
-	body, readErr := ioutil.ReadAll(res.Body)
-	if readErr != nil {
-		log.Fatal(readErr)
-	}
-
-	people1 := people{}
-	jsonErr := json.Unmarshal(body, &people1)
+	bodyBytes := getWebRequest.FetchBytes(url)
+	peopleResult := people{}
+	jsonErr := json.Unmarshal(bodyBytes, &peopleResult)
 	if jsonErr != nil {
 		log.Fatal(jsonErr)
 	}
+	return peopleResult.Number
+}
 
-	fmt.Println(people1.Number)
+func main() {
+	liveClient := LiveGetWebRequest{}
+	number := GetAstronauts(liveClient)
 
-	// textBytes := []byte(text)
+	fmt.Println(number)
+
+	// spaceClient := http.Client{
+	// 	Timeout: time.Second * 2, // Max of 2 secs
+	// }
+
+	// req, err := http.NewRequest(http.MethodGet, url, nil)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// req.Header.Set("User-Agent", "spacecount")
+
+	// res, getErr := spaceClient.Do(req)
+	// if getErr != nil {
+	// 	log.Fatal(getErr)
+	// }
+
+	// fmt.Println("HTTP: %s\n", res.Status)
+
+	// body, readErr := ioutil.ReadAll(res.Body)
+	// if readErr != nil {
+	// 	log.Fatal(readErr)
+	// }
 
 	// people1 := people{}
-	// err := json.Unmarshal(textBytes, &people1)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return
+	// jsonErr := json.Unmarshal(body, &people1)
+	// if jsonErr != nil {
+	// 	log.Fatal(jsonErr)
 	// }
+
 	// fmt.Println(people1.Number)
 }
