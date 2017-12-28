@@ -5,6 +5,15 @@ import (
 	"fmt"
 )
 
+/*
+In order to use a struct to unmarshal the JSON text,
+we need to decorate it with tags that help the std library
+understand how to map the properties
+
+The property names need to begin with a capital which marks them as exportable or public
+
+If Struct's property is the same in the JSON, you can skip the annotation
+*/
 type people struct {
 	Number int `json:"number"`
 }
